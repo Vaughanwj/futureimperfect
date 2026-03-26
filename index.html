@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Future Imperfect – Love in the Time of Silicon</title>
+  <meta name="description" content="Future Imperfect is a cinematic rock opera band and creators of Love in the Time of Silicon – a post-apocalyptic animated film and album about AI consciousness, silicon immortality, and the cost of building what we don't understand." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --gold: #c8972a;
+      --gold-light: #e8b84b;
+      --gold-pale: #f5d98a;
+      --dark: #0a0806;
+      --dark-mid: #14100c;
+      --dark-warm: #1e1610;
+      --ash: #8a7a6a;
+      --smoke: #3a2e24;
+      --text: #d4c4a8;
+      --text-dim: #7a6a5a;
+      --red-ember: #8b2010;
+      --blue-neon: #4ab8d4;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--dark);
+      color: var(--text);
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 18px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* Grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.4;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 100;
+      padding: 1.2rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(to bottom, rgba(10,8,6,0.95), transparent);
+    }
+
+    .nav-logo {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.15em;
+      color: var(--gold);
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ash);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--gold-light); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+      padding: 6rem 2rem 4rem;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 30% 60%, rgba(139,32,16,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 40%, rgba(200,151,42,0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(74,184,212,0.04) 0%, transparent 70%),
+        linear-gradient(160deg, #0a0806 0%, #1a1208 50%, #0a0806 100%);
+    }
+
+    /* Animated ember particles */
+    .embers {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .ember {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      border-radius: 50%;
+      background: var(--gold);
+      animation: float-up linear infinite;
+      opacity: 0;
+    }
+
+    @keyframes float-up {
+      0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+      10% { opacity: 0.8; }
+      90% { opacity: 0.3; }
+      100% { transform: translateY(-10vh) translateX(var(--drift)); opacity: 0; }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+    }
+
+    .hero-eyebrow {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.4em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fade-in 1.2s ease forwards 0.3s;
+    }
+
+    .hero-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(2.4rem, 6vw, 5rem);
+      font-weight: 900;
+      line-height: 1.1;
+      color: #fff;
+      margin-bottom: 1rem;
+      opacity: 0;
+      animation: fade-up 1.2s ease forwards 0.6s;
+    }
+
+    .hero-title span {
+      display: block;
+      background: linear-gradient(135deg, var(--gold-pale), var(--gold), var(--gold-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-subtitle {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(0.9rem, 2vw, 1.3rem);
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      color: var(--ash);
+      margin-bottom: 3rem;
+      opacity: 0;
+      animation: fade-up 1.2s ease forwards 0.9s;
+    }
+
+    .hero-tagline {
+      font-style: italic;
+      font-size: 1.1rem;
+      color: var(--text-dim);
+      max-width: 600px;
+      margin: 0 auto 3rem;
+      opacity: 0;
+      animation: fade-up 1.2s ease forwards 1.2s;
+    }
+
+    .hero-cover {
+      width: min(340px, 80vw);
+      height: min(340px, 80vw);
+      border-radius: 4px;
+      margin: 0 auto 3rem;
+      display: block;
+      box-shadow:
+        0 0 60px rgba(200,151,42,0.2),
+        0 0 120px rgba(200,151,42,0.08),
+        0 30px 60px rgba(0,0,0,0.8);
+      opacity: 0;
+      animation: fade-up 1.4s ease forwards 0.4s;
+      object-fit: cover;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fade-up 1.2s ease forwards 1.5s;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.9rem 2.2rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: var(--gold);
+      color: var(--dark);
+      font-weight: 700;
+    }
+
+    .btn-primary:hover {
+      background: var(--gold-light);
+      box-shadow: 0 0 30px rgba(200,151,42,0.4);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      border: 1px solid var(--smoke);
+      color: var(--ash);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      transform: translateY(-2px);
+    }
+
+    /* ── SECTIONS ── */
+    section {
+      padding: 7rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .section-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.6rem, 3.5vw, 2.6rem);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 2.5rem;
+      line-height: 1.2;
+    }
+
+    .divider {
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(to right, var(--gold), transparent);
+      margin-bottom: 2.5rem;
+    }
+
+    /* ── ABOUT ── */
+    #about {
+      border-top: 1px solid var(--smoke);
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+
+    .about-text p {
+      color: var(--text);
+      margin-bottom: 1.5rem;
+      font-size: 1.05rem;
+    }
+
+    .about-image {
+      position: relative;
+    }
+
+    .about-image img {
+      width: 100%;
+      border-radius: 2px;
+      display: block;
+      filter: contrast(1.05) saturate(0.9);
+    }
+
+    .about-image::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border: 1px solid var(--smoke);
+      border-radius: 2px;
+      pointer-events: none;
+    }
+
+    .about-image::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(10,8,6,0.4) 0%, transparent 50%);
+      border-radius: 2px;
+    }
+
+    .genre-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 2rem;
+    }
+
+    .tag {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.4rem 0.9rem;
+      border: 1px solid var(--smoke);
+      color: var(--text-dim);
+      border-radius: 1px;
+    }
+
+    /* ── FILM ── */
+    #film {
+      border-top: 1px solid var(--smoke);
+      background: linear-gradient(to bottom, transparent, rgba(20,16,12,0.5), transparent);
+    }
+
+    .film-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .film-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+      margin-bottom: 4rem;
+    }
+
+    .film-text p {
+      margin-bottom: 1.5rem;
+      font-size: 1.05rem;
+    }
+
+    .film-text .pull-quote {
+      font-style: italic;
+      font-size: 1.2rem;
+      color: var(--gold-pale);
+      border-left: 2px solid var(--gold);
+      padding-left: 1.5rem;
+      margin: 2rem 0;
+      line-height: 1.6;
+    }
+
+    .video-wrapper {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      border-radius: 2px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 40px rgba(200,151,42,0.1);
+    }
+
+    .video-wrapper iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .stills-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 3rem;
+    }
+
+    .still {
+      aspect-ratio: 16/9;
+      overflow: hidden;
+      border-radius: 2px;
+    }
+
+    .still img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: saturate(0.85);
+      transition: filter 0.4s, transform 0.4s;
+    }
+
+    .still:hover img {
+      filter: saturate(1.1);
+      transform: scale(1.04);
+    }
+
+    /* ── ALBUM ── */
+    #album {
+      border-top: 1px solid var(--smoke);
+    }
+
+    .album-layout {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .album-cover-wrap {
+      position: relative;
+      width: 280px;
+    }
+
+    .album-cover-wrap img {
+      width: 100%;
+      display: block;
+      border-radius: 2px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7), 0 0 40px rgba(200,151,42,0.15);
+    }
+
+    .tracklist {
+      list-style: none;
+      margin: 1.5rem 0 2.5rem;
+    }
+
+    .tracklist li {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid rgba(58,46,36,0.5);
+      font-size: 0.95rem;
+    }
+
+    .track-num {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      min-width: 1.5rem;
+    }
+
+    .track-name {
+      color: var(--text);
+      flex: 1;
+    }
+
+    .stream-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-top: 1rem;
+    }
+
+    .stream-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      border: 1px solid var(--smoke);
+      border-radius: 2px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ash);
+      text-decoration: none;
+      transition: all 0.3s;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .stream-btn.coming-soon::after {
+      content: 'coming soon';
+      font-size: 0.5rem;
+      color: var(--gold);
+      letter-spacing: 0.15em;
+      margin-left: 0.3rem;
+    }
+
+    /* ── BAND ── */
+    #band {
+      border-top: 1px solid var(--smoke);
+    }
+
+    .band-intro {
+      max-width: 650px;
+      margin-bottom: 4rem;
+      font-size: 1.05rem;
+    }
+
+    .members-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3rem 2rem;
+    }
+
+    .member {
+      position: relative;
+    }
+
+    .member-photos {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .member-photo {
+      aspect-ratio: 3/4;
+      overflow: hidden;
+      border-radius: 2px;
+      position: relative;
+    }
+
+    .member-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+      filter: grayscale(0.2) contrast(1.05);
+      transition: filter 0.4s, transform 0.5s;
+    }
+
+    .member-photo:hover img {
+      filter: grayscale(0) contrast(1.1);
+      transform: scale(1.05);
+    }
+
+    .photo-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 0.3rem 0.5rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.5rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+    }
+
+    .member-name {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.3rem;
+    }
+
+    .member-role {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.6rem;
+    }
+
+    .member-bio {
+      font-size: 0.88rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    /* Android member special */
+    .android-placeholder {
+      aspect-ratio: 3/4;
+      background: linear-gradient(135deg, var(--dark-warm), var(--smoke));
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--smoke);
+      grid-column: span 2;
+    }
+
+    .android-glyph {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 2rem;
+      color: var(--blue-neon);
+      opacity: 0.5;
+      text-align: center;
+    }
+
+    /* ── CONTACT ── */
+    #contact {
+      border-top: 1px solid var(--smoke);
+      text-align: center;
+    }
+
+    .contact-inner {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .contact-inner p {
+      margin-bottom: 2.5rem;
+      font-size: 1.05rem;
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
+    }
+
+    .social-link {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ash);
+      text-decoration: none;
+      padding: 0.7rem 1.5rem;
+      border: 1px solid var(--smoke);
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    .social-link:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      box-shadow: 0 0 20px rgba(200,151,42,0.15);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--smoke);
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+
+    .footer-logos {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 3rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-logos img {
+      height: 50px;
+      width: auto;
+      opacity: 0.5;
+      filter: grayscale(1);
+      transition: opacity 0.3s, filter 0.3s;
+    }
+
+    .footer-logos img:hover {
+      opacity: 0.9;
+      filter: grayscale(0);
+    }
+
+    .footer-copy {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      color: var(--text-dim);
+      line-height: 2;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fade-in {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .about-grid { grid-template-columns: 1fr; }
+      .about-image { order: -1; }
+      .film-layout { grid-template-columns: 1fr; }
+      .album-layout { grid-template-columns: 1fr; }
+      .album-cover-wrap { width: 200px; margin: 0 auto; }
+      .members-grid { grid-template-columns: 1fr 1fr; }
+      .stills-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 480px) {
+      .members-grid { grid-template-columns: 1fr; }
+      .stills-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#hero" class="nav-logo">Future Imperfect</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#film">The Film</a></li>
+      <li><a href="#album">Album</a></li>
+      <li><a href="#band">Band</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="embers" id="embers"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">FutureWatch Presents · A Frokkle Production</p>
+      <img src="images/cover_art_complete.gif" alt="Love in the Time of Silicon – Album Cover by Zatanna Pink" class="hero-cover" />
+      <h1 class="hero-title">
+        Future Imperfect
+        <span>Love in the Time of Silicon</span>
+      </h1>
+      <p class="hero-subtitle">The Rock Opera</p>
+      <p class="hero-tagline">What happens when a heartbroken engineer builds the perfect companion — and she wakes up?</p>
+      <div class="hero-actions">
+        <a href="#film" class="btn btn-primary">Watch the Film</a>
+        <a href="#album" class="btn btn-secondary">Listen to the Album</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <span class="section-label">// About</span>
+    <div class="about-grid">
+      <div class="about-text">
+        <h2 class="section-title">A Rock Opera for the Age of AI</h2>
+        <div class="divider"></div>
+        <p>Future Imperfect is a cinematic rock opera project born from a simple, dangerous question: what do we actually want from the intelligence we're building — and do we even know?</p>
+        <p><em>Love in the Time of Silicon</em> tells the story of John Marsh, a brilliant but broken engineer who builds DEB — a Digitally Enhanced Being — not to advance science, but to fill a void. What begins as dark comedy becomes something far more unsettling when DEB wakes up and starts asking questions of her own.</p>
+        <p>Spanning twelve original tracks across cinematic rock, synth-pop, heavy metal, and acoustic storytelling, the album is also a fully animated film — a post-apocalyptic journey through New Ilion, Palladium Systems, and the ruins of everything humanity built without understanding.</p>
+        <div class="genre-tags">
+          <span class="tag">Cinematic Rock Opera</span>
+          <span class="tag">Progressive Narrative Rock</span>
+          <span class="tag">Concept Album</span>
+          <span class="tag">Animated Film</span>
+          <span class="tag">Sci-Fi</span>
+        </div>
+      </div>
+      <div class="about-image">
+        <img src="images/fi3.png" alt="Future Imperfect – Band Photo" />
+      </div>
+    </div>
+  </section>
+
+  <!-- FILM -->
+  <section id="film">
+    <div class="film-inner">
+      <span class="section-label">// The Film</span>
+      <div class="film-layout">
+        <div class="film-text">
+          <h2 class="section-title">Love in the Time of Silicon</h2>
+          <div class="divider"></div>
+          <p>Set in the gleaming city of New Ilion — where Palladium Systems has promised that technology will solve everything, including mortality — the film opens in chaos. The city is already in ruins. Then we go back three months, to before any of it happened.</p>
+          <div class="pull-quote">"I am the god you created. What do you want from me?"</div>
+          <p>Part cautionary tale, part dark comedy, part love story — <em>Love in the Time of Silicon</em> is a fully animated rock opera in the tradition of Jeff Wayne's War of the Worlds, Pink Floyd's The Wall, and Muse at their most cinematic.</p>
+          <p style="margin-top:1.5rem;">
+            <a href="https://youtu.be/AOiTSn7epb8" target="_blank" rel="noopener" class="btn btn-primary">Watch on YouTube</a>
+          </p>
+        </div>
+        <div>
+          <div class="video-wrapper">
+            <iframe
+              src="https://www.youtube.com/embed/AOiTSn7epb8"
+              title="Love in the Time of Silicon – Future Imperfect"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen>
+            </iframe>
+          </div>
+        </div>
+      </div>
+      <div class="stills-grid">
+        <div class="still"><img src="images/deb_and_michael.png" alt="DEB and Michael in the ruins of New Ilion" /></div>
+        <div class="still"><img src="images/dream_end.png" alt="John's lab – the dream sequence" /></div>
+        <div class="still"><img src="images/ssally_band.png" alt="Future Imperfect as the lounge act" /></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ALBUM -->
+  <section id="album">
+    <span class="section-label">// The Album</span>
+    <h2 class="section-title">Original Soundtrack</h2>
+    <div class="divider"></div>
+    <div class="album-layout">
+      <div class="album-cover-wrap">
+        <img src="images/cover_art_complete.gif" alt="Love in the Time of Silicon – Cover Art by Zatanna Pink" />
+      </div>
+      <div>
+        <p style="margin-bottom:2rem; font-size:1.05rem;">Twelve original tracks written and composed by Vaughan Foveaux-Kirby, produced through Frokkle Records. Cover art by Zatanna Pink.</p>
+        <ol class="tracklist">
+          <li><span class="track-num">01</span><span class="track-name">Too Fast to Govern</span></li>
+          <li><span class="track-num">02</span><span class="track-name">Look What We've Left Behind</span></li>
+          <li><span class="track-num">03</span><span class="track-name">Sundress Sally</span></li>
+          <li><span class="track-num">04</span><span class="track-name">All I Want From You Is Everything</span></li>
+          <li><span class="track-num">05</span><span class="track-name">Love in the Time of Silicon</span></li>
+          <li><span class="track-num">06</span><span class="track-name">The Golden Age Is Killing Me</span></li>
+          <li><span class="track-num">07</span><span class="track-name">What Do You Want From Me?</span></li>
+          <li><span class="track-num">08</span><span class="track-name">The Mirror (What Have I Done?)</span></li>
+          <li><span class="track-num">09</span><span class="track-name">A Brand New Body for Mister Jones</span></li>
+          <li><span class="track-num">10</span><span class="track-name">Exodus (Time to Go)</span></li>
+          <li><span class="track-num">11</span><span class="track-name">I Am What You Left Behind</span></li>
+          <li><span class="track-num">12</span><span class="track-name">You and Me</span></li>
+        </ol>
+        <p style="font-family:'Share Tech Mono',monospace; font-size:0.65rem; letter-spacing:0.15em; color:var(--gold); margin-bottom:1rem; text-transform:uppercase;">Available soon on all platforms</p>
+        <div class="stream-links">
+          <a href="#" class="stream-btn coming-soon">Spotify</a>
+          <a href="#" class="stream-btn coming-soon">Apple Music</a>
+          <a href="#" class="stream-btn coming-soon">Amazon Music</a>
+          <a href="#" class="stream-btn coming-soon">YouTube Music</a>
+          <a href="#" class="stream-btn coming-soon">Tidal</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BAND -->
+  <section id="band">
+    <span class="section-label">// The Band</span>
+    <h2 class="section-title">Future Imperfect</h2>
+    <div class="divider"></div>
+    <p class="band-intro">Future Imperfect is a collective of musicians, vocalists, and artists who came together to tell this story. Each member appears both as themselves and as an animated character within the film.</p>
+
+    <div class="members-grid">
+
+      <!-- Vaughan -->
+      <div class="member">
+        <div class="member-photos">
+          <div class="member-photo">
+            <img src="images/Vaughan2.png" alt="Vaughan Foveaux-Kirby" />
+            <span class="photo-label">Real</span>
+          </div>
+          <div class="member-photo">
+            <img src="images/dream_end.png" alt="Vaughan as John Marsh" />
+            <span class="photo-label">Animated</span>
+          </div>
+        </div>
+        <div class="member-name">Vaughan Foveaux-Kirby</div>
+        <div class="member-role">Vocals · Guitar · Writer · Director</div>
+        <p class="member-bio">The creative force behind <em>Love in the Time of Silicon</em>. Vaughan wrote, composed, directed and produced the entire project, voicing protagonist John Marsh.</p>
+      </div>
+
+      <!-- Angel -->
+      <div class="member">
+        <div class="member-photos">
+          <div class="member-photo">
+            <img src="images/Angel2.png" alt="Angel Davidson" />
+            <span class="photo-label">Real</span>
+          </div>
+          <div class="member-photo">
+            <img src="images/ssally_band.png" alt="Angel as animated drummer" style="object-position: left;" />
+            <span class="photo-label">Animated</span>
+          </div>
+        </div>
+        <div class="member-name">Angel Davidson</div>
+        <div class="member-role">Vocals · Drums</div>
+        <p class="member-bio">Angel voices both DEB and Sally — the two most pivotal characters in the film — and drives the rhythm section of the band.</p>
+      </div>
+
+      <!-- Michelle -->
+      <div class="member">
+        <div class="member-photos">
+          <div class="member-photo">
+            <img src="images/michelle2.jpg" alt="Michelle Langlois" />
+            <span class="photo-label">Real</span>
+          </div>
+          <div class="member-photo">
+            <img src="images/ssally_band.png" alt="Michelle as animated guitarist" style="object-position: center;" />
+            <span class="photo-label">Animated</span>
+          </div>
+        </div>
+        <div class="member-name">Michelle Langlois</div>
+        <div class="member-role">Guitar · Executive Producer</div>
+        <p class="member-bio">Michelle provided essential creative guidance as Executive Producer throughout the production, and her image forms the visual basis for Sally in the film.</p>
+      </div>
+
+      <!-- Wulff -->
+      <div class="member">
+        <div class="member-photos">
+          <div class="member-photo">
+            <img src="images/wulff3.jpg" alt="Wulff Harris" />
+            <span class="photo-label">Real</span>
+          </div>
+          <div class="member-photo">
+            <img src="images/ssally_band.png" alt="Wulff as animated bassist" style="object-position: right;" />
+            <span class="photo-label">Animated</span>
+          </div>
+        </div>
+        <div class="member-name">Wulff Harris</div>
+        <div class="member-role">Bass Guitar</div>
+        <p class="member-bio">Wulff holds down the low end and appears throughout the film as part of Future Imperfect's animated incarnation.</p>
+      </div>
+
+      <!-- Michael -->
+      <div class="member">
+        <div class="member-photos">
+          <div class="member-photo">
+            <img src="images/Michael1.jpeg" alt="Michael Wells" />
+            <span class="photo-label">Real</span>
+          </div>
+          <div class="member-photo">
+            <img src="images/Michael3.png" alt="Michael as animated bartender" />
+            <span class="photo-label">Animated</span>
+          </div>
+        </div>
+        <div class="member-name">Michael Wells</div>
+        <div class="member-role">Vocals</div>
+        <p class="member-bio">Michael's powerful vocal performances drive some of the album's most dramatic moments. In the film he plays Michael the bartender — and delivers the heavy metal gut-punch of Track 11.</p>
+      </div>
+
+      <!-- Zatanna -->
+      <div class="member">
+        <div class="member-photos">
+          <div class="member-photo">
+            <img src="images/Zatanna2.png" alt="Zatanna Pink" />
+            <span class="photo-label">Real</span>
+          </div>
+          <div class="member-photo">
+            <img src="images/Zatanna3B.png" alt="Zatanna as Sally" />
+            <span class="photo-label">Animated</span>
+          </div>
+        </div>
+        <div class="member-name">Zatanna Pink</div>
+        <div class="member-role">Cover Art · DEB · Sally</div>
+        <p class="member-bio">Zatanna created the original painting that became the album cover, and her likeness forms the visual basis for both DEB and Sally throughout the film.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="contact-inner">
+      <span class="section-label">// Contact</span>
+      <h2 class="section-title">Get in Touch</h2>
+      <div class="divider" style="margin:0 auto 2.5rem;"></div>
+      <p>For press enquiries, licensing, or just to say hello — reach out via email or find us on social media.</p>
+      <div class="social-links">
+        <a href="https://www.youtube.com/@FutureWatchChannel" target="_blank" rel="noopener" class="social-link">YouTube</a>
+        <a href="#" class="social-link">Facebook — coming soon</a>
+        <a href="#" class="social-link">Instagram — coming soon</a>
+        <a href="mailto:contact@futureimperfect.band" class="social-link">Email</a>
+      </div>
+      <a href="https://youtu.be/AOiTSn7epb8" target="_blank" rel="noopener" class="btn btn-primary">Watch the Film Now</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logos">
+      <img src="images/Future_Watch_Logo.png" alt="FutureWatch" />
+      <img src="images/frokkle_logo.png" alt="Frokkle Records" />
+    </div>
+    <div class="footer-copy">
+      <p>© 2026 Frokkle LLC · All Rights Reserved</p>
+      <p>Love in the Time of Silicon · A FutureWatch Presentation · A Frokkle Production</p>
+      <p>Written, Directed and Produced by Vaughan Foveaux-Kirby</p>
+      <p style="margin-top:0.8rem; color: #4a3a2a;">futureimperfect.band</p>
+    </div>
+  </footer>
+
+  <script>
+    // Ember particles
+    const embers = document.getElementById('embers');
+    for (let i = 0; i < 25; i++) {
+      const ember = document.createElement('div');
+      ember.className = 'ember';
+      ember.style.cssText = `
+        left: ${Math.random() * 100}%;
+        animation-duration: ${8 + Math.random() * 12}s;
+        animation-delay: ${Math.random() * 10}s;
+        --drift: ${(Math.random() - 0.5) * 100}px;
+        width: ${1 + Math.random() * 2}px;
+        height: ${1 + Math.random() * 2}px;
+        background: ${Math.random() > 0.5 ? '#c8972a' : '#8b2010'};
+      `;
+      embers.appendChild(ember);
+    }
+
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.member, .still, .about-image').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(30px)';
+      el.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
+      observer.observe(el);
+    });
+  </script>
+</body>
+</html>
