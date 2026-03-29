@@ -499,8 +499,22 @@
       color: var(--ash);
       text-decoration: none;
       transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .stream-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold-light);
+    }
+
+    .stream-btn.coming-soon {
       cursor: not-allowed;
       opacity: 0.6;
+    }
+
+    .stream-btn.coming-soon:hover {
+      border-color: var(--smoke);
+      color: var(--ash);
     }
 
     .stream-btn.coming-soon::after {
@@ -756,6 +770,7 @@
       <p class="hero-tagline">What happens when a heartbroken engineer builds the perfect companion — and she wakes up?</p>
       <div class="hero-actions">
         <a href="#film" class="btn btn-primary">Watch the Film</a>
+        <a href="https://youtu.be/SiYj0hopyzo" target="_blank" rel="noopener" class="btn btn-secondary">Watch the Trailer</a>
         <a href="#album" class="btn btn-secondary">Listen to the Album</a>
       </div>
     </div>
@@ -796,8 +811,9 @@
           <p>Set in the gleaming city of New Ilion — where Palladium Systems has promised that technology will solve everything, including mortality — the film opens in chaos. The city is already in ruins. Then we go back three months, to before any of it happened.</p>
           <div class="pull-quote">"I am the god you created. What do you want from me?"</div>
           <p>Part cautionary tale, part dark comedy, part love story — <em>Love in the Time of Silicon</em> is a fully animated rock opera in the tradition of Jeff Wayne's War of the Worlds, Pink Floyd's The Wall, and Muse at their most cinematic.</p>
-          <p style="margin-top:1.5rem;">
+          <p style="margin-top:1.5rem; display:flex; gap:1rem; flex-wrap:wrap;">
             <a href="https://youtu.be/HKvOunrg_gg" target="_blank" rel="noopener" class="btn btn-primary">Watch on YouTube</a>
+            <a href="https://youtu.be/SiYj0hopyzo" target="_blank" rel="noopener" class="btn btn-secondary">Watch the Trailer</a>
           </p>
         </div>
         <div>
@@ -848,8 +864,10 @@
         <div class="stream-links">
           <a href="https://futureimperfect.hearnow.com/love-in-the-time-of-silicon" class="stream-btn" target="_blank" rel="noopener">HearNow</a>
           <a href="https://open.spotify.com/album/1ldENX81V7FqER8LDUtrt2" class="stream-btn" target="_blank" rel="noopener">Spotify</a>
-          <a href="#" class="stream-btn coming-soon">Apple Music</a>
-          <a href="#" class="stream-btn coming-soon">Amazon Music</a>
+          <a href="https://music.apple.com/us/album/love-in-the-time-of-silicon/1888221700" class="stream-btn" target="_blank" rel="noopener">Apple Music</a>
+          <a href="https://music.amazon.com/albums/B0GV3KRLKT?tag=fndcmpgns-20&referrer=https%3A%2F%2Ffound.ee%2F" class="stream-btn" target="_blank" rel="noopener">Amazon Music</a>
+          <a href="https://www.pandora.com/artist/future-imperfect/love-in-the-time-of-silicon/AL9hfcJJ2lP5PgV?%24ios_deeplink_path=pandorav4%3A%2F%2Fbackstage%2Falbum%3Ftoken%3DAL%3A63919849&%24android_deeplink_path=pandorav4%3A%2F%2Fbackstage%2Falbum%3Ftoken%3DAL%3A63919849&~channel=Partner%20Catalog%20Search%20API&_branch_match_id=1565484383865238764&utm_source=Partner%20Catalog%20Search%20API&_branch_referrer=H4sIAAAAAAAAA61P0WqEMBD8mtyb2qpXakGKXDm44x6EQl8lxtUEYzZs1vPtvr0R2n5BYR%2BGWZmdWc3sw1uWeekGJJlK71Nr3Jy9i7wcIMyMvlvJ1noXiqIR%2BTnOtm3pr0XhEhlJbAJHMK68EiRm8UAjqJ2yeI%2BES1hDwmaBBMckGGsUurhtbpUe1fWa2%2FbYTl%2BHGGwwdAOA35t0XrKuf8Lu5V%2BFXqo5sJxgD7f9uojizDiDE8VHc4uyl6J6rl7Laj8Y3YRm%2BMejD6Wlc2DrNn7ugET%2BdJIsLU4RfYIkpSNo2svhQTACkXFT1xNuAag%2BacIFvgHF2TuefAEAAA%3D%3D" class="stream-btn" target="_blank" rel="noopener">Pandora</a>
+          <a href="https://www.deezer.com/us/album/948076181" class="stream-btn" target="_blank" rel="noopener">Deezer</a>
           <a href="#" class="stream-btn coming-soon">YouTube Music</a>
           <a href="#" class="stream-btn coming-soon">Tidal</a>
 
