@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="shortcut icon" type="image/x-icon" href="https://futureimperfect.band/favicon.ico" />
+  <title>Love in the Time of Silicon — Watch &amp; Listen</title>
+  <meta name="description" content="Watch the animated rock opera Love in the Time of Silicon free, and get the album on your favourite platform. By Future Imperfect." />
+
+  <!-- Open Graph / social preview -->
+  <meta property="og:title" content="Love in the Time of Silicon — Watch &amp; Listen" />
+  <meta property="og:description" content="Watch the film free. Get the album. An animated rock opera by Future Imperfect." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://futureimperfect.band/links/" />
+  <meta property="og:image" content="https://futureimperfect.band/images/cover_art_complete.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --gold: #c8972a;
+      --gold-light: #e8b84b;
+      --gold-pale: #f5d98a;
+      --dark: #0a0806;
+      --dark-mid: #14100c;
+      --dark-warm: #1e1610;
+      --ash: #8a7a6a;
+      --smoke: #3a2e24;
+      --text: #d4c4a8;
+      --text-dim: #7a6a5a;
+      --red-ember: #8b2010;
+      --blue-neon: #4ab8d4;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--dark);
+      color: var(--text);
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 18px;
+      line-height: 1.7;
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1.25rem;
+      position: relative;
+    }
+
+    /* Cinematic background wash */
+    .page-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse at 30% 25%, rgba(139,32,16,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 75%, rgba(200,151,42,0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(74,184,212,0.04) 0%, transparent 70%),
+        linear-gradient(160deg, #0a0806 0%, #1a1208 50%, #0a0806 100%);
+    }
+
+    /* Grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.4;
+    }
+
+    /* Ember particles */
+    .embers { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 1; }
+    .ember {
+      position: absolute; width: 2px; height: 2px; border-radius: 50%;
+      background: var(--gold); animation: float-up linear infinite; opacity: 0;
+    }
+    @keyframes float-up {
+      0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+      10% { opacity: 0.8; }
+      90% { opacity: 0.3; }
+      100% { transform: translateY(-10vh) translateX(var(--drift)); opacity: 0; }
+    }
+
+    .card {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 460px;
+      text-align: center;
+      animation: fade-up 1s ease forwards;
+    }
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .eyebrow {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.4em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    .cover {
+      width: 190px;
+      height: 190px;
+      object-fit: cover;
+      border-radius: 3px;
+      margin: 0 auto 1.75rem;
+      display: block;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 60px rgba(200,151,42,0.08);
+      border: 1px solid var(--smoke);
+    }
+
+    h1 {
+      font-family: 'Cinzel Decorative', serif;
+      font-weight: 900;
+      font-size: clamp(1.6rem, 7vw, 2.2rem);
+      line-height: 1.15;
+      color: var(--gold-pale);
+      margin-bottom: 0.75rem;
+      text-shadow: 0 2px 20px rgba(200,151,42,0.15);
+    }
+
+    .tagline {
+      font-style: italic;
+      color: var(--ash);
+      font-size: 1rem;
+      margin-bottom: 2.25rem;
+    }
+
+    /* Primary action buttons — full width, stacked */
+    .action {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      width: 100%;
+      padding: 1.05rem 1.5rem;
+      margin-bottom: 0.9rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    .action-film {
+      background: var(--gold);
+      color: var(--dark);
+      font-weight: 700;
+    }
+    .action-film:hover {
+      background: var(--gold-light);
+      box-shadow: 0 0 30px rgba(200,151,42,0.4);
+      transform: translateY(-2px);
+    }
+
+    .action-album {
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold-light);
+      font-weight: 700;
+    }
+    .action-album:hover {
+      background: rgba(200,151,42,0.08);
+      box-shadow: 0 0 30px rgba(200,151,42,0.2);
+      transform: translateY(-2px);
+    }
+
+    .sublabel {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      margin: 1.75rem 0 1rem;
+    }
+
+    .stream-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      justify-content: center;
+    }
+    .stream-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.55rem 1rem;
+      border: 1px solid var(--smoke);
+      border-radius: 2px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ash);
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+    .stream-btn:hover { border-color: var(--gold); color: var(--gold-light); }
+
+    .trailer-link {
+      display: inline-block;
+      margin-top: 1.75rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ash);
+      text-decoration: none;
+      border-bottom: 1px solid var(--smoke);
+      padding-bottom: 2px;
+      transition: all 0.3s;
+    }
+    .trailer-link:hover { color: var(--gold); border-color: var(--gold); }
+
+    footer {
+      position: relative;
+      z-index: 2;
+      margin-top: 2.5rem;
+      text-align: center;
+    }
+    footer a {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      color: var(--gold);
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+    footer a:hover { color: var(--gold-light); }
+    .footer-note {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      margin-top: 0.6rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-bg"></div>
+  <div class="embers" id="embers"></div>
+
+  <main class="card">
+    <div class="eyebrow">Future Imperfect</div>
+
+    <img class="cover" src="https://futureimperfect.band/images/cover_art_complete.png" alt="Love in the Time of Silicon — cover art by Zatanna Pink" />
+
+    <h1>Love in the Time of Silicon</h1>
+    <p class="tagline">An engineer built her to love him. Then she woke up.</p>
+
+    <a class="action action-film" href="https://youtu.be/HKvOunrg_gg" target="_blank" rel="noopener">▶&nbsp; Watch the Film — Free</a>
+    <a class="action action-album" href="https://music.amazon.com/albums/B0GV3KRLKT" target="_blank" rel="noopener">🎧&nbsp; Get the Album</a>
+
+    <div class="sublabel">// or listen on</div>
+    <div class="stream-links">
+      <a href="https://open.spotify.com/album/1ldENX81V7FqER8LDUtrt2" class="stream-btn" target="_blank" rel="noopener">Spotify</a>
+      <a href="https://music.apple.com/us/album/love-in-the-time-of-silicon/1888221700" class="stream-btn" target="_blank" rel="noopener">Apple Music</a>
+      <a href="https://music.amazon.com/albums/B0GV3KRLKT" class="stream-btn" target="_blank" rel="noopener">Amazon Music</a>
+      <a href="https://www.pandora.com/artist/future-imperfect/love-in-the-time-of-silicon/AL9hfcJJ2lP5PgV" class="stream-btn" target="_blank" rel="noopener">Pandora</a>
+      <a href="https://www.deezer.com/us/album/948076181" class="stream-btn" target="_blank" rel="noopener">Deezer</a>
+      <a href="https://futureimperfect.hearnow.com/love-in-the-time-of-silicon" class="stream-btn" target="_blank" rel="noopener">HearNow</a>
+    </div>
+
+    <a class="trailer-link" href="https://youtu.be/SiYj0hopyzo" target="_blank" rel="noopener">Watch the Trailer</a>
+  </main>
+
+  <footer>
+    <a href="https://futureimperfect.band/">futureimperfect.band</a>
+    <div class="footer-note">The full site · film · album · band</div>
+  </footer>
+
+  <script>
+    // Ember particles (mirrors the main site)
+    (function () {
+      var container = document.getElementById('embers');
+      var n = 22;
+      for (var i = 0; i < n; i++) {
+        var e = document.createElement('div');
+        e.className = 'ember';
+        e.style.left = Math.random() * 100 + '%';
+        e.style.animationDuration = (6 + Math.random() * 8) + 's';
+        e.style.animationDelay = (Math.random() * 8) + 's';
+        e.style.setProperty('--drift', (Math.random() * 60 - 30) + 'px');
+        var s = 1 + Math.random() * 2;
+        e.style.width = s + 'px';
+        e.style.height = s + 'px';
+        container.appendChild(e);
+      }
+    })();
+  </script>
+</body>
+</html>
