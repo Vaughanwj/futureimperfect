@@ -1,7 +1,7 @@
 [project]
 name = "littos-poster"
 version = "0.1.0"
-description = "Hexagonal social auto-poster: drips short-form clips to Instagram Reels (full auto) and TikTok (inbox draft, manual publish tap)."
+description = "Hexagonal social auto-poster: drips short-form clips to Instagram Reels (full auto). TikTok is handled natively via TikTok Studio."
 requires-python = ">=3.10"
 dependencies = [
     "requests>=2.31",

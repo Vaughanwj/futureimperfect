@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from datetime import date, datetime
 from pathlib import Path
 
-from ...domain.models import Platform, ScheduledPost
+from ...domain.models import ScheduledPost
 from ...domain.schedule import Schedule
 
 
@@ -31,7 +31,9 @@ class CsvSchedule:
                         publish_date=datetime.strptime(row["Date"].strip(), "%m/%d/%Y").date(),
                         publish_time=datetime.strptime(row["Time"].strip(), "%H:%M").time(),
                         caption=row["Caption"],
-                        platforms=(Platform.INSTAGRAM, Platform.TIKTOK),
+                        # platforms intentionally omitted - use
+                        # ScheduledPost's default so there's one place
+                        # that decides which platforms are active.
                     )
                 )
         return Schedule(posts=tuple(posts))

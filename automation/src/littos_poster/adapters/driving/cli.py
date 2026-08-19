@@ -7,10 +7,12 @@ from datetime import datetime
 from ...config import Config
 from ...domain.models import Platform
 from ...domain.services import PublishDuePosts
+from ...ports.publisher import PublisherPort
 from ..driven.csv_schedule import CsvSchedule
 from ..driven.dry_run_publisher import DryRunPublisher
 from ..driven.ffmpeg_end_card_trimmer import FfmpegEndCardTrimmer
 from ..driven.github_pages_media_host import GithubPagesMediaHost
+from ..driven.in_memory_publish_log import InMemoryPublishLog
 from ..driven.instagram_publisher import InstagramGraphPublisher
 from ..driven.json_publish_log import JsonPublishLog
 from ..driven.meta_token_refresher import MetaLongLivedTokenRefresher
@@ -18,31 +20,54 @@ from ..driven.notifiers import ConsoleNotifier
 from ..driven.system_clock import SystemClock
 from ..driven.tiktok_publisher import TikTokInboxPublisher
 
+# Platforms this pipeline actually dispatches to. TikTok is deliberately
+# excluded: the Content Posting API can't auto-publish to a public brand
+# account (unaudited apps are restricted to SELF_ONLY + a private account,
+# and TikTok's audit guidelines explicitly reject self-use upload tools as
+# a use case). TikTok posting is now handled natively via TikTok Studio's
+# own scheduler, outside this pipeline.
+#
+# TikTokInboxPublisher is kept in adapters/driven/ in case the API route
+# is ever revisited - reviving it is just adding Platform.TIKTOK back here
+# and to ScheduledPost's default platforms in domain/models.py.
+ACTIVE_PLATFORMS: frozenset[Platform] = frozenset({Platform.INSTAGRAM})
+
 
 def _build_publish_due(config: Config) -> PublishDuePosts:
     schedule = CsvSchedule(csv_path=config.schedule_csv, clips_dir=config.clips_dir)
     media_host = GithubPagesMediaHost(site_base_url=config.site_base_url)
-    media_processor = FfmpegEndCardTrimmer(end_card_seconds=config.end_card_trim_seconds)
 
-    ig_publisher = InstagramGraphPublisher(
-        media_host=media_host,
-        ig_user_id=config.ig_user_id,
-        access_token=config.ig_access_token,
-    )
-    tiktok_publisher = TikTokInboxPublisher(
-        media_processor=media_processor,
-        access_token=config.tiktok_access_token,
-    )
+    publishers: dict[Platform, PublisherPort] = {}
 
-    publishers = {
-        Platform.INSTAGRAM: DryRunPublisher(ig_publisher) if config.dry_run else ig_publisher,
-        Platform.TIKTOK: DryRunPublisher(tiktok_publisher) if config.dry_run else tiktok_publisher,
-    }
+    if Platform.INSTAGRAM in ACTIVE_PLATFORMS:
+        ig_publisher = InstagramGraphPublisher(
+            media_host=media_host,
+            ig_user_id=config.ig_user_id,
+            access_token=config.ig_access_token,
+        )
+        publishers[Platform.INSTAGRAM] = (
+            DryRunPublisher(ig_publisher) if config.dry_run else ig_publisher
+        )
+
+    if Platform.TIKTOK in ACTIVE_PLATFORMS:
+        media_processor = FfmpegEndCardTrimmer(end_card_seconds=config.end_card_trim_seconds)
+        tiktok_publisher = TikTokInboxPublisher(
+            media_processor=media_processor,
+            access_token=config.tiktok_access_token,
+        )
+        publishers[Platform.TIKTOK] = (
+            DryRunPublisher(tiktok_publisher) if config.dry_run else tiktok_publisher
+        )
+
+    # DRY_RUN must never touch the real (repo-committed) publish log - it
+    # would mark posts as published that never actually went out, causing
+    # the next real run to silently skip them.
+    log = InMemoryPublishLog() if config.dry_run else JsonPublishLog(path=config.publish_log_path)
 
     return PublishDuePosts(
         schedule=schedule,
         publishers=publishers,
-        log=JsonPublishLog(path=config.publish_log_path),
+        log=log,
         notifier=ConsoleNotifier(),
     )
 

@@ -36,7 +36,7 @@ def test_due_returns_only_the_matching_date(schedule: CsvSchedule):
     assert post.clip_id == "01_TooFastToGovern"
     assert post.publish_time == time(18, 0)
     assert post.caption.startswith('"You wanted a god."')
-    assert post.platforms == (Platform.INSTAGRAM, Platform.TIKTOK)
+    assert post.platforms == (Platform.INSTAGRAM,)
     assert post.clip_path.endswith("01_TooFastToGovern.mp4")
 
 

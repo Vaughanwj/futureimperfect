@@ -23,7 +23,10 @@ class ScheduledPost:
     publish_date: date
     publish_time: time
     caption: str
-    platforms: tuple[Platform, ...] = (Platform.INSTAGRAM, Platform.TIKTOK)
+    # TikTok is handled natively in TikTok Studio, outside this pipeline
+    # (see adapters/driving/cli.py::ACTIVE_PLATFORMS for why). Instagram is
+    # the only platform this pipeline dispatches to by default.
+    platforms: tuple[Platform, ...] = (Platform.INSTAGRAM,)
 
 
 @dataclass(frozen=True)
