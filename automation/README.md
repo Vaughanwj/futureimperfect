@@ -26,21 +26,38 @@ future releases, not thrown away after this one.
    Business account and link it to the FutureWatch-AI Facebook Page.
 2. **Meta app.** Create one at developers.facebook.com, add the
    `instagram_business_basic` + `instagram_business_content_publish`
-   permissions, generate a long-lived user token, and note the IG user id.
-   You do **not** need to submit for App Review: Meta only requires review
-   for people who aren't already on the app's own role list, and since
-   this only ever posts to your own account, adding yourself as
-   Admin/Developer/Tester on the app is enough to publish in Development
-   Mode indefinitely.
+   permissions, and note the IG user id. You do **not** need to submit for
+   App Review: Meta only requires review for people who aren't already on
+   the app's own role list, and since this only ever posts to your own
+   account, adding yourself as Admin/Developer/Tester on the app is enough
+   to publish in Development Mode indefinitely.
+
+   **The token must be long-lived, not the raw token Graph API Explorer
+   gives you.** A token straight out of the Explorer is short-lived
+   (expires in ~1-2 hours) and *will* silently break the next cron run.
+   Exchange it before saving it anywhere:
+   ```bash
+   curl -s "https://graph.facebook.com/v21.0/oauth/access_token?grant_type=fb_exchange_token&client_id=$META_APP_ID&client_secret=$META_APP_SECRET&fb_exchange_token=$SHORT_LIVED_TOKEN"
+   ```
+   The `access_token` in that response is the long-lived one (~60 days) -
+   that's what goes in the `IG_ACCESS_TOKEN` secret below. (Equivalently:
+   set `IG_ACCESS_TOKEN` to the short-lived token temporarily and run
+   `littos-poster refresh-ig-token` once locally, then use *its* output.)
+   Sanity-check with the token debug tool
+   (developers.facebook.com/tools/debug/accesstoken) that `Expires` shows
+   weeks out, not hours, before moving on.
 3. **GitHub repo secrets** (Settings -> Secrets and variables -> Actions):
    - `IG_USER_ID`, `IG_ACCESS_TOKEN`
    - `META_APP_ID`, `META_APP_SECRET` (only needed for the token-refresh
      workflow)
-   - `GH_PAT` - a personal access token with `repo` scope, only needed if
-     you want the weekly token-refresh workflow to update `IG_ACCESS_TOKEN`
-     automatically (it calls `gh secret set`, which the default
-     `GITHUB_TOKEN` isn't allowed to do). Skip it and refresh manually
-     every ~60 days if you'd rather not maintain a PAT.
+   - `GH_PAT` - a personal access token with `repo` scope. Needed for the
+     weekly token-refresh workflow to actually persist a refreshed token
+     (it calls `gh secret set`, which the default `GITHUB_TOKEN` isn't
+     allowed to do). **Without this, `refresh-ig-token.yml` computes a new
+     token every week and then has nowhere to put it** - the old one
+     keeps ticking down to expiry regardless. Only skip this if you're
+     committing to refreshing `IG_ACCESS_TOKEN` by hand before every
+     ~60-day deadline.
 4. Clips already live at `/clips/*.mp4` and the schedule at
    `/LITTOS_publer_schedule_PLAIN.csv`, both committed to this repo so
    GitHub Pages serves them at `https://futureimperfect.band/clips/...`
