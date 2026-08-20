@@ -7,7 +7,12 @@ on:
     # documented in automation/README.md. Adjust here if the owner's
     # timezone differs from America/New_York (also update TIMEZONE below).
     - cron: "0 22 * * 1-5"
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "Date to publish for (YYYY-MM-DD), or 'today' for a normal run. Use a past date to backfill a missed/failed day."
+        required: false
+        default: "today"
 
 permissions:
   contents: write
@@ -34,7 +39,7 @@ jobs:
       # Instagram only - TikTok is handled natively via TikTok Studio's own
       # scheduler, outside this pipeline (see automation/README.md and
       # ACTIVE_PLATFORMS in adapters/driving/cli.py).
-      - name: Publish today's due posts
+      - name: Publish due posts
         id: publish
         continue-on-error: true
         env:
@@ -43,7 +48,7 @@ jobs:
           END_CARD_TRIM_SECONDS: "10.0"
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
-        run: littos-poster publish-due --date today
+        run: littos-poster publish-due --date "${{ github.event.inputs.date || 'today' }}"
 
       # Runs even if the publish step above failed, so a partial success
       # is not lost on retry - the log is what stops the next run from
