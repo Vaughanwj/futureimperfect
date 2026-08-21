@@ -23,12 +23,18 @@ def make_config(tmp_path: Path, *, dry_run: bool) -> Config:
         tiktok_client_key="",
         tiktok_client_secret="",
         tiktok_refresh_token="",
+        fb_page_id="",
+        fb_page_access_token="",
         dry_run=dry_run,
     )
 
 
 def test_tiktok_is_not_active_by_default():
     assert ACTIVE_PLATFORMS == frozenset({Platform.INSTAGRAM})
+
+
+def test_facebook_is_not_active_by_default():
+    assert Platform.FACEBOOK not in ACTIVE_PLATFORMS
 
 
 def test_only_instagram_publisher_is_wired(tmp_path: Path):

@@ -34,6 +34,10 @@ class Config:
     tiktok_client_secret: str
     tiktok_refresh_token: str
 
+    # Facebook Page Reels (dormant - see ACTIVE_PLATFORMS in cli.py)
+    fb_page_id: str
+    fb_page_access_token: str
+
     dry_run: bool
 
     @classmethod
@@ -55,5 +59,7 @@ class Config:
             tiktok_client_key=_env("TIKTOK_CLIENT_KEY"),
             tiktok_client_secret=_env("TIKTOK_CLIENT_SECRET"),
             tiktok_refresh_token=_env("TIKTOK_REFRESH_TOKEN"),
+            fb_page_id=_env("FB_PAGE_ID"),
+            fb_page_access_token=_env("FB_PAGE_ACCESS_TOKEN"),
             dry_run=_env("DRY_RUN", "false").lower() in ("1", "true", "yes"),
         )

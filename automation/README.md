@@ -19,6 +19,11 @@ future releases, not thrown away after this one.
   codebase and still tested, in case the API route is ever worth
   revisiting - it's just not wired into the default run. See
   `ACTIVE_PLATFORMS` in `adapters/driving/cli.py` to re-enable it.
+- **Facebook (FutureWatch-AI Page): built, not yet turned on.** Instagram
+  being linked to the Page doesn't cross-post API-published Reels there
+  automatically - that's a separate `FacebookPagePublisher` adapter,
+  written but **not live-verified** (no Page credentials exist yet to
+  test against). See §One-time owner setup to enable it.
 
 ## One-time owner setup
 
@@ -65,6 +70,21 @@ future releases, not thrown away after this one.
 5. **TikTok**: schedule posts natively in TikTok Studio (app or
    tiktok.com) using the same clips/captions from
    `LITTOS_publer_schedule_PLAIN.csv` - no pipeline setup needed.
+6. **Facebook (optional, to enable Page cross-posting):**
+   - In the same Meta app, add the `pages_show_list`, `pages_read_engagement`,
+     and `pages_manage_posts` permissions.
+   - Generate a *user* token in Graph API Explorer with those scopes, then
+     call `GET /me/accounts?access_token=<user_token>` - the response
+     lists your pages with a page-specific `access_token` and `id` for
+     each. Use the FutureWatch-AI Page's values.
+   - Add `FB_PAGE_ID` and `FB_PAGE_ACCESS_TOKEN` as GitHub repo secrets.
+   - In `adapters/driving/cli.py`, add `Platform.FACEBOOK` to
+     `ACTIVE_PLATFORMS`, and in `domain/models.py` add it to
+     `ScheduledPost`'s default `platforms` tuple. Without both, either
+     nothing dispatches to Facebook, or it dispatches with no publisher
+     registered and fails every run.
+   - Expect to debug the actual Graph API calls the first time this runs
+     for real - see the warning in `facebook_page_publisher.py`.
 
 ## Running it
 
@@ -113,20 +133,24 @@ Hexagonal / ports-and-adapters, `src/littos_poster/`:
   (`PublisherPort`, `SchedulePort`, `MediaHostPort`, `MediaProcessorPort`,
   `PublishLogPort`, `ClockPort`, `NotifierPort`).
 - `adapters/driven/` - the implementations: `CsvSchedule`,
-  `InstagramGraphPublisher`, `TikTokInboxPublisher` (dormant, see below),
-  `FfmpegEndCardTrimmer`, `GithubPagesMediaHost`, `JsonPublishLog`,
-  `SystemClock`, `ConsoleNotifier`, `MetaLongLivedTokenRefresher`.
+  `InstagramGraphPublisher`, `TikTokInboxPublisher` (dormant),
+  `FacebookPagePublisher` (dormant, unverified), `FfmpegEndCardTrimmer`,
+  `GithubPagesMediaHost`, `JsonPublishLog`, `SystemClock`,
+  `ConsoleNotifier`, `MetaLongLivedTokenRefresher`.
 - `adapters/driving/cli.py` - the only entrypoint; everything above it is
   wired here. `ACTIVE_PLATFORMS` at the top of this file is the single
   switch for which platforms actually get dispatched to - currently just
   `Platform.INSTAGRAM`. A publisher is only constructed and registered
-  when its platform is in that set, so TikTok's adapter exists but never
-  gets wired up (or asked for TikTok credentials) in the default run.
+  when its platform is in that set, so TikTok's and Facebook's adapters
+  exist but never get wired up (or asked for their credentials) in the
+  default run.
 
-Adding a platform back (or a new one, e.g. the spec's Facebook idea) means
-writing/reusing one `PublisherPort` adapter, adding it to
-`ACTIVE_PLATFORMS`, and adding it to `ScheduledPost`'s default platforms
-in `domain/models.py` - nothing else in `domain/` changes.
+Reviving TikTok or turning on Facebook is the same two-step recipe either
+way: add the platform to `ACTIVE_PLATFORMS` in `cli.py`, and to
+`ScheduledPost`'s default `platforms` tuple in `domain/models.py`. Adding
+a genuinely new platform beyond those two means writing one new
+`PublisherPort` adapter first, then the same two steps - nothing else in
+`domain/` changes.
 
 ## Tests
 

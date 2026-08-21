@@ -10,6 +10,7 @@ from ...domain.services import PublishDuePosts
 from ...ports.publisher import PublisherPort
 from ..driven.csv_schedule import CsvSchedule
 from ..driven.dry_run_publisher import DryRunPublisher
+from ..driven.facebook_page_publisher import FacebookPagePublisher
 from ..driven.ffmpeg_end_card_trimmer import FfmpegEndCardTrimmer
 from ..driven.github_pages_media_host import GithubPagesMediaHost
 from ..driven.in_memory_publish_log import InMemoryPublishLog
@@ -30,6 +31,13 @@ from ..driven.tiktok_publisher import TikTokInboxPublisher
 # TikTokInboxPublisher is kept in adapters/driven/ in case the API route
 # is ever revisited - reviving it is just adding Platform.TIKTOK back here
 # and to ScheduledPost's default platforms in domain/models.py.
+#
+# Platform.FACEBOOK is similarly dormant: FacebookPagePublisher is built
+# (posts to the FutureWatch-AI Page via the Page Reels Publishing API) but
+# not live-verified, and there are no FB_PAGE_ID / FB_PAGE_ACCESS_TOKEN
+# secrets yet. Add Platform.FACEBOOK here and to ScheduledPost's default
+# platforms once those exist - do NOT enable without them, an unconfigured
+# platform here fails every post to it and reddens the whole cron run.
 ACTIVE_PLATFORMS: frozenset[Platform] = frozenset({Platform.INSTAGRAM})
 
 
@@ -57,6 +65,16 @@ def _build_publish_due(config: Config) -> PublishDuePosts:
         )
         publishers[Platform.TIKTOK] = (
             DryRunPublisher(tiktok_publisher) if config.dry_run else tiktok_publisher
+        )
+
+    if Platform.FACEBOOK in ACTIVE_PLATFORMS:
+        fb_publisher = FacebookPagePublisher(
+            media_host=media_host,
+            page_id=config.fb_page_id,
+            access_token=config.fb_page_access_token,
+        )
+        publishers[Platform.FACEBOOK] = (
+            DryRunPublisher(fb_publisher) if config.dry_run else fb_publisher
         )
 
     # DRY_RUN must never touch the real (repo-committed) publish log - it

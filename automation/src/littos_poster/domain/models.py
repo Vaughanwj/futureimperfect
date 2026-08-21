@@ -8,6 +8,7 @@ from enum import Enum
 class Platform(str, Enum):
     INSTAGRAM = "instagram"
     TIKTOK = "tiktok"
+    FACEBOOK = "facebook"
 
 
 class PostOutcome(str, Enum):
@@ -23,9 +24,10 @@ class ScheduledPost:
     publish_date: date
     publish_time: time
     caption: str
-    # TikTok is handled natively in TikTok Studio, outside this pipeline
-    # (see adapters/driving/cli.py::ACTIVE_PLATFORMS for why). Instagram is
-    # the only platform this pipeline dispatches to by default.
+    # TikTok is handled natively in TikTok Studio, outside this pipeline.
+    # Facebook (FacebookPagePublisher) is built but dormant pending Page
+    # credentials. Instagram is the only platform this pipeline dispatches
+    # to by default - see adapters/driving/cli.py::ACTIVE_PLATFORMS.
     platforms: tuple[Platform, ...] = (Platform.INSTAGRAM,)
 
 
