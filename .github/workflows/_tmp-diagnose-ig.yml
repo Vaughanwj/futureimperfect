@@ -1,0 +1,22 @@
+name: TEMP diagnose IG account
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Account identity + recent media permalinks
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+        run: |
+          echo "== account =="
+          curl -s "https://graph.facebook.com/v21.0/$IG_USER_ID?fields=username,name,media_count" \
+            --data-urlencode "access_token=$IG_ACCESS_TOKEN"
+          echo ""
+          echo "== media 01_TooFastToGovern / 02_AllIWantFromYou / 03_IKnowHowSheShouldLook =="
+          curl -s "https://graph.facebook.com/v21.0/$IG_USER_ID/media?fields=id,permalink,media_product_type,media_type,timestamp,caption" \
+            --data-urlencode "access_token=$IG_ACCESS_TOKEN" \
+            --data-urlencode "limit=10"
