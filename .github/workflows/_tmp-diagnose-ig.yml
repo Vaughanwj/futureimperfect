@@ -13,10 +13,12 @@ jobs:
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
         run: |
           echo "== account =="
-          curl -s "https://graph.facebook.com/v21.0/$IG_USER_ID?fields=username,name,media_count" \
+          curl -sG "https://graph.facebook.com/v21.0/$IG_USER_ID" \
+            --data-urlencode "fields=username,name,media_count" \
             --data-urlencode "access_token=$IG_ACCESS_TOKEN"
           echo ""
-          echo "== media 01_TooFastToGovern / 02_AllIWantFromYou / 03_IKnowHowSheShouldLook =="
-          curl -s "https://graph.facebook.com/v21.0/$IG_USER_ID/media?fields=id,permalink,media_product_type,media_type,timestamp,caption" \
-            --data-urlencode "access_token=$IG_ACCESS_TOKEN" \
-            --data-urlencode "limit=10"
+          echo "== recent media =="
+          curl -sG "https://graph.facebook.com/v21.0/$IG_USER_ID/media" \
+            --data-urlencode "fields=id,permalink,media_product_type,media_type,timestamp,caption" \
+            --data-urlencode "limit=10" \
+            --data-urlencode "access_token=$IG_ACCESS_TOKEN"
