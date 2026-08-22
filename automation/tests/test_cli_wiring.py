@@ -29,18 +29,18 @@ def make_config(tmp_path: Path, *, dry_run: bool) -> Config:
     )
 
 
-def test_tiktok_is_not_active_by_default():
-    assert ACTIVE_PLATFORMS == frozenset({Platform.INSTAGRAM})
+def test_tiktok_is_not_active():
+    assert Platform.TIKTOK not in ACTIVE_PLATFORMS
 
 
-def test_facebook_is_not_active_by_default():
-    assert Platform.FACEBOOK not in ACTIVE_PLATFORMS
+def test_instagram_and_facebook_are_active():
+    assert ACTIVE_PLATFORMS == frozenset({Platform.INSTAGRAM, Platform.FACEBOOK})
 
 
-def test_only_instagram_publisher_is_wired(tmp_path: Path):
+def test_instagram_and_facebook_publishers_are_wired(tmp_path: Path):
     use_case = _build_publish_due(make_config(tmp_path, dry_run=False))
 
-    assert set(use_case.publishers.keys()) == {Platform.INSTAGRAM}
+    assert set(use_case.publishers.keys()) == {Platform.INSTAGRAM, Platform.FACEBOOK}
 
 
 def test_dry_run_uses_an_in_memory_log_not_the_real_file(tmp_path: Path):

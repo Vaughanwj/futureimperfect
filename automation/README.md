@@ -1,13 +1,20 @@
 # LITTOS social auto-poster
 
-Drips the short-form clips to Instagram Reels (fully automatic) on the
-schedule in `LITTOS_publer_schedule_PLAIN.csv`. Built to be reused for
-future releases, not thrown away after this one.
+Drips the short-form clips to Instagram Reels and the FutureWatch-AI
+Facebook Page (both fully automatic) on the schedule in
+`LITTOS_publer_schedule_PLAIN.csv`. Built to be reused for future
+releases, not thrown away after this one.
 
 ## How it works
 
 - **Instagram**: fully automatic. The daily GitHub Actions run publishes
   the Reel publicly with no human step.
+- **Facebook (FutureWatch-AI Page)**: also fully automatic, via a
+  separate `FacebookPagePublisher` posting directly to the Page (Instagram
+  being linked to the Page does not cross-post API-published Reels there
+  on its own - that's why this exists as its own adapter). Needs its own
+  Page access token, distinct from the Instagram one - see owner setup
+  step 6.
 - **TikTok is not part of this pipeline.** The Content Posting API turned
   out to be a dead end for a public brand account: unaudited apps are
   restricted to `SELF_ONLY` posting on a private account, and TikTok's
@@ -70,21 +77,16 @@ future releases, not thrown away after this one.
 5. **TikTok**: schedule posts natively in TikTok Studio (app or
    tiktok.com) using the same clips/captions from
    `LITTOS_publer_schedule_PLAIN.csv` - no pipeline setup needed.
-6. **Facebook (optional, to enable Page cross-posting):**
-   - In the same Meta app, add the `pages_show_list`, `pages_read_engagement`,
-     and `pages_manage_posts` permissions.
-   - Generate a *user* token in Graph API Explorer with those scopes, then
-     call `GET /me/accounts?access_token=<user_token>` - the response
-     lists your pages with a page-specific `access_token` and `id` for
-     each. Use the FutureWatch-AI Page's values.
-   - Add `FB_PAGE_ID` and `FB_PAGE_ACCESS_TOKEN` as GitHub repo secrets.
-   - In `adapters/driving/cli.py`, add `Platform.FACEBOOK` to
-     `ACTIVE_PLATFORMS`, and in `domain/models.py` add it to
-     `ScheduledPost`'s default `platforms` tuple. Without both, either
-     nothing dispatches to Facebook, or it dispatches with no publisher
-     registered and fails every run.
-   - Expect to debug the actual Graph API calls the first time this runs
-     for real - see the warning in `facebook_page_publisher.py`.
+6. **Facebook** - already set up (`FB_PAGE_ID` / `FB_PAGE_ACCESS_TOKEN`
+   secrets in place, `Platform.FACEBOOK` active). For reference, the
+   permissions needed were `pages_show_list`, `pages_read_engagement`,
+   `pages_manage_posts` on the Meta app, plus **the app itself connected
+   as a business asset** under business.facebook.com -> Business Settings
+   -> Accounts -> Apps (the Page being in a Business Portfolio meant a
+   plain personal-profile token wasn't enough - `/me/accounts` returned
+   empty until the app was explicitly connected there too). The Page
+   token came from `GET /{page-id}?fields=name,access_token` using a
+   long-lived user token, once that connection was in place.
 
 ## Running it
 
@@ -133,24 +135,23 @@ Hexagonal / ports-and-adapters, `src/littos_poster/`:
   (`PublisherPort`, `SchedulePort`, `MediaHostPort`, `MediaProcessorPort`,
   `PublishLogPort`, `ClockPort`, `NotifierPort`).
 - `adapters/driven/` - the implementations: `CsvSchedule`,
-  `InstagramGraphPublisher`, `TikTokInboxPublisher` (dormant),
-  `FacebookPagePublisher` (dormant, unverified), `FfmpegEndCardTrimmer`,
-  `GithubPagesMediaHost`, `JsonPublishLog`, `SystemClock`,
-  `ConsoleNotifier`, `MetaLongLivedTokenRefresher`.
+  `InstagramGraphPublisher`, `FacebookPagePublisher`, `TikTokInboxPublisher`
+  (dormant), `FfmpegEndCardTrimmer`, `GithubPagesMediaHost`,
+  `JsonPublishLog`, `SystemClock`, `ConsoleNotifier`,
+  `MetaLongLivedTokenRefresher`.
 - `adapters/driving/cli.py` - the only entrypoint; everything above it is
   wired here. `ACTIVE_PLATFORMS` at the top of this file is the single
-  switch for which platforms actually get dispatched to - currently just
-  `Platform.INSTAGRAM`. A publisher is only constructed and registered
-  when its platform is in that set, so TikTok's and Facebook's adapters
-  exist but never get wired up (or asked for their credentials) in the
-  default run.
+  switch for which platforms actually get dispatched to - currently
+  `Platform.INSTAGRAM` and `Platform.FACEBOOK`. A publisher is only
+  constructed and registered when its platform is in that set, so
+  TikTok's adapter exists but never gets wired up (or asked for TikTok
+  credentials) in the default run.
 
-Reviving TikTok or turning on Facebook is the same two-step recipe either
-way: add the platform to `ACTIVE_PLATFORMS` in `cli.py`, and to
-`ScheduledPost`'s default `platforms` tuple in `domain/models.py`. Adding
-a genuinely new platform beyond those two means writing one new
-`PublisherPort` adapter first, then the same two steps - nothing else in
-`domain/` changes.
+Reviving TikTok (or adding a genuinely new platform) is the same
+two-step recipe: add it to `ACTIVE_PLATFORMS` in `cli.py`, and to
+`ScheduledPost`'s default `platforms` tuple in `domain/models.py` -
+writing a new `PublisherPort` adapter first if one doesn't already
+exist. Nothing else in `domain/` changes.
 
 ## Tests
 

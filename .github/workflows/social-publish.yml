@@ -36,9 +36,9 @@ jobs:
       - name: Install pipeline package
         run: pip install -e ./automation
 
-      # Instagram only - TikTok is handled natively via TikTok Studio's own
-      # scheduler, outside this pipeline (see automation/README.md and
-      # ACTIVE_PLATFORMS in adapters/driving/cli.py).
+      # Instagram + Facebook - TikTok is handled natively via TikTok
+      # Studio's own scheduler, outside this pipeline (see
+      # automation/README.md and ACTIVE_PLATFORMS in adapters/driving/cli.py).
       - name: Publish due posts
         id: publish
         continue-on-error: true
@@ -48,6 +48,8 @@ jobs:
           END_CARD_TRIM_SECONDS: "10.0"
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          FB_PAGE_ACCESS_TOKEN: ${{ secrets.FB_PAGE_ACCESS_TOKEN }}
         run: littos-poster publish-due --date "${{ github.event.inputs.date || 'today' }}"
 
       # Runs even if the publish step above failed, so a partial success

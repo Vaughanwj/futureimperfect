@@ -32,13 +32,13 @@ from ..driven.tiktok_publisher import TikTokInboxPublisher
 # is ever revisited - reviving it is just adding Platform.TIKTOK back here
 # and to ScheduledPost's default platforms in domain/models.py.
 #
-# Platform.FACEBOOK is similarly dormant: FacebookPagePublisher is built
-# (posts to the FutureWatch-AI Page via the Page Reels Publishing API) but
-# not live-verified, and there are no FB_PAGE_ID / FB_PAGE_ACCESS_TOKEN
-# secrets yet. Add Platform.FACEBOOK here and to ScheduledPost's default
-# platforms once those exist - do NOT enable without them, an unconfigured
-# platform here fails every post to it and reddens the whole cron run.
-ACTIVE_PLATFORMS: frozenset[Platform] = frozenset({Platform.INSTAGRAM})
+# Platform.FACEBOOK: FB_PAGE_ID / FB_PAGE_ACCESS_TOKEN now exist (Page:
+# FutureWatch-AI). Still not live-verified against a real post as of this
+# change - the first real dispatch is the actual verification. Watch the
+# next run's summary closely; drop back to {Platform.INSTAGRAM} here (and
+# remove Platform.FACEBOOK from ScheduledPost's default platforms) if it
+# fails, same as we would for any other platform's credentials going bad.
+ACTIVE_PLATFORMS: frozenset[Platform] = frozenset({Platform.INSTAGRAM, Platform.FACEBOOK})
 
 
 def _build_publish_due(config: Config) -> PublishDuePosts:

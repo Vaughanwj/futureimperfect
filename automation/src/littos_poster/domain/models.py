@@ -25,10 +25,10 @@ class ScheduledPost:
     publish_time: time
     caption: str
     # TikTok is handled natively in TikTok Studio, outside this pipeline.
-    # Facebook (FacebookPagePublisher) is built but dormant pending Page
-    # credentials. Instagram is the only platform this pipeline dispatches
-    # to by default - see adapters/driving/cli.py::ACTIVE_PLATFORMS.
-    platforms: tuple[Platform, ...] = (Platform.INSTAGRAM,)
+    # Instagram and Facebook (FutureWatch-AI Page) are the platforms this
+    # pipeline dispatches to by default - see
+    # adapters/driving/cli.py::ACTIVE_PLATFORMS.
+    platforms: tuple[Platform, ...] = (Platform.INSTAGRAM, Platform.FACEBOOK)
 
 
 @dataclass(frozen=True)
