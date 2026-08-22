@@ -88,6 +88,15 @@ releases, not thrown away after this one.
    token came from `GET /{page-id}?fields=name,access_token` using a
    long-lived user token, once that connection was in place.
 
+   Unlike the IG token, this one has no fixed expiry (`expires_at: 0` via
+   `/debug_token`) - no weekly-refresh workflow needed for it. It does
+   carry a `data_access_expires_at` checkpoint (~90 days out from
+   issuance, so ~2026-11-20 for the current token), which Meta's
+   convention resets on continued active use - the daily cron should keep
+   it current on its own. If Facebook posting ever starts failing with an
+   auth error despite `is_valid: true` having held before, re-check that
+   date and re-mint the token the same way if needed.
+
 ## Running it
 
 ```bash
