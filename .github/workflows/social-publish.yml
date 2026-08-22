@@ -55,16 +55,39 @@ jobs:
       # Runs even if the publish step above failed, so a partial success
       # is not lost on retry - the log is what stops the next run from
       # double-posting to a platform that already succeeded.
+      #
+      # Retries with rebase on a push rejection: two runs whose date
+      # ranges don't overlap (e.g. two manual backfills fired close
+      # together) each add different, non-overlapping lines to the sorted
+      # JSON array, so a rebase resolves cleanly without manual help. This
+      # is belt-and-suspenders for a scenario that's already rare (only
+      # concurrent workflow_dispatch runs can race here - the daily cron
+      # never overlaps itself) - do not rely on it as a reason to fire
+      # multiple backfills at once; prefer doing them one at a time.
       - name: Persist publish log
         if: always()
         run: |
           git config user.name "littos-poster-bot"
           git config user.email "actions@users.noreply.github.com"
           git add automation/state/publish_log.json
-          if ! git diff --cached --quiet; then
-            git commit -m "chore: update publish log [skip ci]"
-            git push
+          if git diff --cached --quiet; then
+            exit 0
           fi
+          git commit -m "chore: update publish log [skip ci]"
+          for attempt in 1 2 3 4 5; do
+            if git push; then
+              exit 0
+            fi
+            echo "push rejected (attempt $attempt/5), rebasing onto origin/main and retrying..."
+            git fetch origin main
+            if ! git rebase origin/main; then
+              echo "rebase hit a real conflict - needs manual reconciliation, see automation/state/publish_log.json" >&2
+              git rebase --abort
+              exit 1
+            fi
+          done
+          echo "failed to push publish log after 5 attempts" >&2
+          exit 1
 
       - name: Fail the run if publishing failed
         if: steps.publish.outcome == 'failure'

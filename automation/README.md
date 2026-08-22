@@ -120,10 +120,15 @@ Two GitHub Actions workflows, both in `.github/workflows/` at the repo
 root (GitHub only reads workflows from there, not from `automation/`):
 
 - **`social-publish.yml`** - runs weekdays at 18:00 America/New_York
-  (`0 22 * * 1-5` UTC), plus `workflow_dispatch` for manual runs. Commits
+  (`0 22 * * 1-5` UTC), plus `workflow_dispatch` (with an optional `date`
+  input for backfilling a missed/failed day) for manual runs. Commits
   `automation/state/publish_log.json` back to the repo after every run,
   even on partial failure, so a retry never double-posts to a platform
-  that already succeeded.
+  that already succeeded. That commit step retries with a rebase if the
+  push is rejected, but **avoid firing multiple `workflow_dispatch`
+  backfills at the same time** - do them one at a time. Concurrent runs
+  can still race on the git push; the retry handles it in the common case
+  but isn't a substitute for just not doing that.
 - **`refresh-ig-token.yml`** - weekly, keeps the Meta token from ever
   approaching its ~60-day expiry.
 
